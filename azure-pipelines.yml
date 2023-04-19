@@ -3,7 +3,7 @@
 trigger: none
 
 variables:
-  serviceConnectionName: 'FirewallDeployer'
+  serviceConnectionName: 'Azure Service Connection Name'
   resourceGroupName: 'fwgroup-hai28'
 
 pool:
@@ -21,7 +21,7 @@ stages:
     - task: AzureCLI@2
       displayName: 'Deploy Bicep'
       inputs:
-        azureSubscription: 'FirewallDeployer'
+        azureSubscription: $(serviceConnectionName)
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
