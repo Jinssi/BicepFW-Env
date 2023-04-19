@@ -1,12 +1,12 @@
 param parentName string
 
-resource parentFirewall 'Microsoft.Network/firewallPolicies@2021-05-01' existing = {
+resource parentFirewallPolicy 'Microsoft.Network/firewallPolicies@2021-05-01' existing = {
   name: parentName
 }
 
 resource spokesRuleCollectionGroup 'Microsoft.Network/firewallPolicies/ruleCollectionGroups@2020-11-01' = {
   name: 'Spoke-specific'
-  parent: parentFirewall
+  parent: parentFirewallPolicy
   properties: {
     priority: 500
     ruleCollections: [

@@ -1,0 +1,28 @@
+# File: azure-pipeline.yaml
+
+trigger: none
+
+variables:
+  serviceConnectionName: 'FirewallDeployer'
+  resourceGroupName: 'fwgroup-hai28'
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+- stage: Deploy_Bicep
+  jobs:
+  - job:
+    displayName: Checkout
+    steps:
+    - checkout: self
+  - job: Deploy
+    steps:
+    - task: AzureCLI@2
+      displayName: 'Deploy Bicep'
+      inputs:
+        azureSubscription: 'FirewallDeployer'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az deployment group create --resource-group $(resourceGroupName) --template-file $(Build.SourcesDirectory)/firewall/rulecollectiongroups/deploy.bicep --parameters $(Build.SourcesDirectory)/azuredeploy.parameters.json

@@ -1,12 +1,12 @@
 param parentName string
 
-resource parentFirewall 'Microsoft.Network/firewallPolicies@2021-05-01' existing = {
+resource parentFirewallPolicy 'Microsoft.Network/firewallPolicies@2021-05-01' existing = {
   name: parentName
 }
 
 resource commonRuleCollectionGroup 'Microsoft.Network/firewallPolicies/ruleCollectionGroups@2021-05-01' = {
   name: 'Common'
-  parent: parentFirewall
+  parent: parentFirewallPolicy
   properties: {
     priority: 100
     ruleCollections: [
@@ -77,6 +77,62 @@ resource commonRuleCollectionGroup 'Microsoft.Network/firewallPolicies/ruleColle
             ruleType: 'ApplicationRule'
             name: 'Https'
             description: 'Allow traffic from all sources to Windows Update (https)'
+            protocols: [
+              {
+                protocolType: 'Https'
+                port: 443
+              }
+            ]
+            fqdnTags: [
+              'WindowsUpdate'
+            ]
+            webCategories: []
+            targetFqdns: []
+            targetUrls: []
+            terminateTLS: false
+            sourceAddresses: [
+              '*'
+            ]
+            destinationAddresses: []
+            sourceIpGroups: []
+          }
+        ]
+      }
+      {
+        name: 'Deny-Common-Application-Rules'
+        priority: 103
+        ruleCollectionType: 'FirewallPolicyFilterRuleCollection'
+        action: {
+          type: 'Deny'
+        }
+        rules: [
+          {
+            ruleType: 'ApplicationRule'
+            name: 'Http'
+            description: 'Deny traffic from all sources to Windows Update (http)'
+            protocols: [
+              {
+                protocolType: 'Http'
+                port: 80
+              }
+            ]
+            fqdnTags: [
+              'WindowsUpdate'
+            ]
+            webCategories: []
+            targetFqdns: []
+            targetUrls: []
+            terminateTLS: false
+            sourceAddresses: [
+              '*'
+            ]
+            destinationAddresses: []
+            sourceIpGroups: []
+          }
+          {
+            ruleType: 'ApplicationRule'
+            name: 'Https'
+            description: 'Deny traffic from all sources to Windows Update (https)'
             protocols: [
               {
                 protocolType: 'Https'
